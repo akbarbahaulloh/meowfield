@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MapView {
+class Map_View {
     public function __construct() {
         add_action('add_meta_boxes', [$this, 'add_meta_boxes']);
         add_action('save_post_meowfield_map', [$this, 'save_map_view']);

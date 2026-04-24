@@ -20,7 +20,7 @@ class Main {
             new Admin\Fields();
             new Admin\Cpt();
             new Admin\Tax();
-            new Admin\MapView();
+            new Admin\Map_View();
             
             // Initialize GitHub Updater
             $updater = new Admin\Updater('akbarbahaulloh', 'meowfield', 'main');
