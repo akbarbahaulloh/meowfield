@@ -8,12 +8,13 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
         <div class="mf-header-col mf-col-label">Label</div>
         <div class="mf-header-col mf-col-name">Name</div>
         <div class="mf-header-col mf-col-type">Type</div>
-        <div class="mf-header-col mf-col-key">Key</div>
+        <div class="mf-header-col mf-col-shortcode">Shortcode</div>
     </div>
     
     <div class="mf-fields-list">
         <?php if (!empty($fields)): foreach ($fields as $index => $field): 
-            $key = isset($field['key']) ? $field['key'] : 'field_' . uniqid();
+            $tag = $field['type'] === 'map' ? 'meowfield_map' : 'meowfield';
+            $shortcode = !empty($field['name']) ? "[$tag name=\"{$field['name']}\"]" : '';
         ?>
             <div class="mf-field-row" data-id="<?php echo $index; ?>">
                 <div class="mf-field-row-header">
@@ -28,7 +29,7 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
                     </div>
                     <div class="mf-col-name mf-field-name-text"><?php echo esc_html($field['name']); ?></div>
                     <div class="mf-col-type mf-field-type-text"><?php echo esc_html($field['type']); ?></div>
-                    <div class="mf-col-key mf-field-key-text" style="font-size: 12px; color: #999;"><?php echo esc_html($key); ?></div>
+                    <div class="mf-col-shortcode mf-field-shortcode-text" style="font-family: monospace; font-size: 11px; color: #6366f1; background: #eef2ff; padding: 2px 6px; border-radius: 4px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;"><?php echo esc_html($shortcode); ?></div>
                 </div>
                 
                 <div class="mf-field-content">
@@ -59,8 +60,8 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
                             </select>
                         </div>
                         <div class="mf-setting-group">
-                            <label>Field Key</label>
-                            <input type="text" name="meowfield_fields[<?php echo $index; ?>][key]" value="<?php echo esc_attr($key); ?>" readonly style="background: #f1f1f1;">
+                            <label>Shortcode (Auto-generated)</label>
+                            <input type="text" value="<?php echo esc_attr($shortcode); ?>" readonly style="background: #f8fafc; font-family: monospace; color: #6366f1; cursor: text;" class="mf-input-shortcode" onclick="this.select();">
                         </div>
                     </div>
                 </div>
@@ -87,7 +88,7 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
             </div>
             <div class="mf-col-name mf-field-name-text"></div>
             <div class="mf-col-type mf-field-type-text">Text</div>
-            <div class="mf-col-key mf-field-key-text" style="font-size: 12px; color: #999;">[KEY]</div>
+            <div class="mf-col-shortcode mf-field-shortcode-text" style="font-family: monospace; font-size: 11px; color: #6366f1; background: #eef2ff; padding: 2px 6px; border-radius: 4px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;"></div>
         </div>
         
         <div class="mf-field-content">
@@ -118,8 +119,8 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
                     </select>
                 </div>
                 <div class="mf-setting-group">
-                    <label>Field Key</label>
-                    <input type="text" name="meowfield_fields[[INDEX]][key]" value="[KEY]" readonly style="background: #f1f1f1;">
+                    <label>Shortcode (Auto-generated)</label>
+                    <input type="text" value="" readonly style="background: #f8fafc; font-family: monospace; color: #6366f1; cursor: text;" class="mf-input-shortcode" onclick="this.select();">
                 </div>
             </div>
         </div>

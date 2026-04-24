@@ -43,24 +43,39 @@
                 
                 // Auto-fill name if empty
                 const $nameInput = $row.find('.mf-input-name');
+                let name = $nameInput.val();
                 if (!$nameInput.data('edited')) {
-                    const name = val.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+                    name = val.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
                     $nameInput.val(name);
                     $row.find('.mf-field-name-text').text(name);
                 }
+                self.updateShortcode($row, name);
             });
 
             this.$list.on('change', '.mf-input-name', function() {
                 $(this).data('edited', true);
                 const val = $(this).val();
-                $(this).closest('.mf-field-row').find('.mf-field-name-text').text(val);
+                const $row = $(this).closest('.mf-field-row');
+                $row.find('.mf-field-name-text').text(val);
+                self.updateShortcode($row, val);
             });
 
             this.$list.on('change', '.mf-input-type', function() {
                 const val = $(this).val();
                 const text = $(this).find('option:selected').text();
-                $(this).closest('.mf-field-row').find('.mf-field-type-text').text(text);
+                const $row = $(this).closest('.mf-field-row');
+                $row.find('.mf-field-type-text').text(text);
+                const name = $row.find('.mf-input-name').val();
+                self.updateShortcode($row, name);
             });
+        },
+
+        updateShortcode: function($row, name) {
+            const type = $row.find('.mf-input-type').val();
+            const tag = type === 'map' ? 'meowfield_map' : 'meowfield';
+            const shortcode = name ? '[' + tag + ' name="' + name + '"]' : '';
+            $row.find('.mf-field-shortcode-text').text(shortcode);
+            $row.find('.mf-input-shortcode').val(shortcode);
         },
 
         makeSortable: function() {
@@ -81,10 +96,7 @@
             const index = this.$list.find('.mf-field-row').length;
             let html = this.$template.html();
             
-            // Generate a unique key for ACF compatibility style
-            const key = 'field_' + Math.random().toString(36).substr(2, 9);
-            
-            html = html.replace(/\[INDEX\]/g, index).replace(/\[KEY\]/g, key);
+            html = html.replace(/\[INDEX\]/g, index);
             
             const $newRow = $(html).hide();
             this.$list.append($newRow);

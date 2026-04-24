@@ -86,7 +86,6 @@ class Fields {
                     'label' => sanitize_text_field($field['label']),
                     'name'  => sanitize_title($field['name'] ?: $field['label']),
                     'type'  => sanitize_text_field($field['type']),
-                    'key'   => sanitize_text_field($field['key']),
                     'required' => isset($field['required']) ? 1 : 0,
                     'options' => isset($field['options']) ? $field['options'] : [],
                 ];
