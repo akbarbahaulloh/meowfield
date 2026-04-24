@@ -43,19 +43,80 @@
                 draggable: true
             }).addTo(map);
 
+            const $latInput = $wrapper.find('.mf-map-lat');
+            const $lngInput = $wrapper.find('.mf-map-lng');
+            const $searchBtn = $wrapper.find('.mf-map-search-btn');
+            const $searchInput = $wrapper.find('.mf-map-search');
+
+            const updateMapState = function(newLat, newLng, newZoom) {
+                const z = newZoom || map.getZoom();
+                marker.setLatLng([newLat, newLng]);
+                map.setView([newLat, newLng], z);
+                $latInput.val(newLat);
+                $lngInput.val(newLng);
+                MeowMap.updateValue($input, newLat, newLng, z);
+            };
+
             marker.on('dragend', function(e) {
                 const position = marker.getLatLng();
+                $latInput.val(position.lat);
+                $lngInput.val(position.lng);
                 MeowMap.updateValue($input, position.lat, position.lng, map.getZoom());
             });
 
             map.on('click', function(e) {
-                marker.setLatLng(e.latlng);
-                MeowMap.updateValue($input, e.latlng.lat, e.latlng.lng, map.getZoom());
+                updateMapState(e.latlng.lat, e.latlng.lng);
             });
 
             map.on('zoomend', function() {
                 const position = marker.getLatLng();
                 MeowMap.updateValue($input, position.lat, position.lng, map.getZoom());
+            });
+
+            // Handle coordinate manual input
+            $latInput.on('change', function() {
+                updateMapState(parseFloat($(this).val()) || 0, parseFloat($lngInput.val()) || 0);
+            });
+            $lngInput.on('change', function() {
+                updateMapState(parseFloat($latInput.val()) || 0, parseFloat($(this).val()) || 0);
+            });
+
+            // Handle Search
+            const performSearch = function() {
+                const query = $searchInput.val();
+                if (!query) return;
+
+                $searchBtn.text('Mencari...').prop('disabled', true);
+                
+                $.ajax({
+                    url: 'https://nominatim.openstreetmap.org/search',
+                    data: {
+                        format: 'json',
+                        q: query,
+                        limit: 1
+                    },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            updateMapState(parseFloat(data[0].lat), parseFloat(data[0].lon), 15);
+                        } else {
+                            alert('Lokasi tidak ditemukan.');
+                        }
+                    },
+                    error: function() {
+                        alert('Gagal menghubungi server pencarian.');
+                    },
+                    complete: function() {
+                        $searchBtn.text('Cari').prop('disabled', false);
+                    }
+                });
+            };
+
+            $searchBtn.on('click', performSearch);
+            $searchInput.on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    performSearch();
+                }
             });
         },
 

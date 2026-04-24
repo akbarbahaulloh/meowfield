@@ -16,8 +16,8 @@ class Meta_Boxes {
         wp_enqueue_media();
         wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
         wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
-        wp_enqueue_script('meowfield-map', MEOWFIELD_URL . 'assets/js/map-field.js', ['jquery', 'leaflet'], MEOWFIELD_VERSION, true);
-        wp_enqueue_script('meowfield-image', MEOWFIELD_URL . 'assets/js/image-field.js', ['jquery'], MEOWFIELD_VERSION, true);
+        wp_enqueue_script('meowfield-map', MEOWFIELD_URL . 'assets/js/map-field.js', ['jquery', 'leaflet'], time(), true);
+        wp_enqueue_script('meowfield-image', MEOWFIELD_URL . 'assets/js/image-field.js', ['jquery'], time(), true);
     }
 
     public function add_custom_meta_boxes($post_type) {
@@ -121,10 +121,41 @@ class Meta_Boxes {
     }
 
     private function render_map_field($name, $value) {
-        // We will implement this with Leaflet soon
-        echo '<div class="mf-map-input-wrapper" data-name="' . $name . '">';
-        echo '<input type="hidden" name="mf[' . $name . ']" value="' . esc_attr($value) . '" class="mf-map-value">';
-        echo '<div class="mf-map-canvas" style="height:300px; background:#eee; border:1px solid #ddd;">Map will appear here</div>';
+        $lat = '-6.200000';
+        $lng = '106.816666';
+        
+        if (!empty($value)) {
+            $data = json_decode(stripslashes($value), true);
+            if ($data) {
+                $lat = isset($data['lat']) ? $data['lat'] : $lat;
+                $lng = isset($data['lng']) ? $data['lng'] : $lng;
+            } else {
+                $parts = explode(',', $value);
+                if (count($parts) >= 2) {
+                    $lat = trim($parts[0]);
+                    $lng = trim($parts[1]);
+                }
+            }
+        }
+
+        echo '<div class="mf-map-input-wrapper" data-name="' . esc_attr($name) . '" style="border: 1px solid #ddd; background: #f9f9f9; padding: 10px; border-radius: 4px;">';
+        
+        // Search bar
+        echo '<div style="margin-bottom: 10px; display: flex; gap: 5px;">';
+        echo '<input type="text" class="mf-map-search" placeholder="Cari lokasi (contoh: Jakarta, Monas)" style="flex: 1; padding: 6px;">';
+        echo '<button type="button" class="button mf-map-search-btn">Cari</button>';
+        echo '</div>';
+        
+        // Map Canvas
+        echo '<div class="mf-map-canvas" style="height:300px; background:#eee; border:1px solid #ddd; border-radius: 4px; margin-bottom: 10px;"></div>';
+        
+        // Coordinates and Value
+        echo '<div style="display: flex; gap: 10px;">';
+        echo '<div style="flex: 1;"><label style="display:block; font-size: 12px; font-weight: bold;">Latitude</label><input type="text" class="mf-map-lat" value="' . esc_attr($lat) . '" style="width: 100%;"></div>';
+        echo '<div style="flex: 1;"><label style="display:block; font-size: 12px; font-weight: bold;">Longitude</label><input type="text" class="mf-map-lng" value="' . esc_attr($lng) . '" style="width: 100%;"></div>';
+        echo '</div>';
+        
+        echo '<input type="hidden" name="mf[' . esc_attr($name) . ']" value="' . esc_attr($value) . '" class="mf-map-value">';
         echo '</div>';
     }
 
