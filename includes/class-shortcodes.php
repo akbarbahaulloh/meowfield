@@ -211,7 +211,7 @@ class Shortcodes {
                         
                         $terms = get_terms([
                             'taxonomy' => $tax_slug,
-                            'hide_empty' => true,
+                            'hide_empty' => false,
                         ]);
 
                         if (!empty($terms) && !is_wp_error($terms)) {

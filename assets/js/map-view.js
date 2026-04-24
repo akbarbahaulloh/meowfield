@@ -17,7 +17,7 @@
             
             if (!$canvas.length) return;
 
-            const map = L.map(canvasId);
+            const map = L.map(canvasId).setView([-0.789275, 113.921327], 5);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap'
             }).addTo(map);
