@@ -5,11 +5,10 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
 
 <div class="mf-builder-wrapper">
     <div class="mf-builder-header">
-        <div class="mf-header-col">Label</div>
-        <div class="mf-header-col">Name</div>
-        <div class="mf-header-col">Type</div>
-        <div class="mf-header-col">Key</div>
-        <div class="mf-header-col"></div>
+        <div class="mf-header-col mf-col-label">Label</div>
+        <div class="mf-header-col mf-col-name">Name</div>
+        <div class="mf-header-col mf-col-type">Type</div>
+        <div class="mf-header-col mf-col-key">Key</div>
     </div>
     
     <div class="mf-fields-list">
@@ -18,14 +17,18 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
         ?>
             <div class="mf-field-row" data-id="<?php echo $index; ?>">
                 <div class="mf-field-row-header">
-                    <div class="mf-field-handle dashicons dashicons-menu"></div>
-                    <div class="mf-field-label-text"><?php echo esc_html($field['label']); ?></div>
-                    <div class="mf-field-name-text"><?php echo esc_html($field['name']); ?></div>
-                    <div class="mf-field-type-text"><?php echo esc_html($field['type']); ?></div>
-                    <div class="mf-field-key-text" style="font-size: 10px; color: #999;"><?php echo esc_html($key); ?></div>
-                    <div class="mf-field-actions">
-                        <button type="button" class="mf-delete-field mf-btn mf-btn-danger">Delete</button>
+                    <div class="mf-col-label">
+                        <div class="mf-col-label-top">
+                            <div class="mf-field-handle dashicons dashicons-menu"></div>
+                            <div class="mf-field-label-text"><?php echo esc_html($field['label']); ?></div>
+                        </div>
+                        <div class="mf-field-actions">
+                            <button type="button" class="mf-delete-field mf-btn mf-btn-danger">Delete</button>
+                        </div>
                     </div>
+                    <div class="mf-col-name mf-field-name-text"><?php echo esc_html($field['name']); ?></div>
+                    <div class="mf-col-type mf-field-type-text"><?php echo esc_html($field['type']); ?></div>
+                    <div class="mf-col-key mf-field-key-text" style="font-size: 12px; color: #999;"><?php echo esc_html($key); ?></div>
                 </div>
                 
                 <div class="mf-field-content">
@@ -66,14 +69,18 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
 <script type="text/template" id="mf-field-template">
     <div class="mf-field-row is-open">
         <div class="mf-field-row-header">
-            <div class="mf-field-handle dashicons dashicons-menu"></div>
-            <div class="mf-field-label-text">(no label)</div>
-            <div class="mf-field-name-text"></div>
-            <div class="mf-field-type-text">Text</div>
-            <div class="mf-field-key-text" style="font-size: 10px; color: #999;">[KEY]</div>
-            <div class="mf-field-actions">
-                <button type="button" class="mf-delete-field mf-btn mf-btn-danger">Delete</button>
+            <div class="mf-col-label">
+                <div class="mf-col-label-top">
+                    <div class="mf-field-handle dashicons dashicons-menu"></div>
+                    <div class="mf-field-label-text">(no label)</div>
+                </div>
+                <div class="mf-field-actions">
+                    <button type="button" class="mf-delete-field mf-btn mf-btn-danger">Delete</button>
+                </div>
             </div>
+            <div class="mf-col-name mf-field-name-text"></div>
+            <div class="mf-col-type mf-field-type-text">Text</div>
+            <div class="mf-col-key mf-field-key-text" style="font-size: 12px; color: #999;">[KEY]</div>
         </div>
         
         <div class="mf-field-content">

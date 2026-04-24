@@ -16,13 +16,13 @@
 }
 
 .mf-builder-header {
-    background: #f1f5f9;
+    background: #ffffff;
     border-bottom: 1px solid var(--mf-border);
     padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     font-weight: 600;
+    display: grid;
+    grid-template-columns: 3fr 3fr 3fr 2fr;
+    align-items: center;
 }
 
 .mf-fields-list {
@@ -42,7 +42,7 @@
 .mf-field-row-header {
     padding: 12px 16px;
     display: grid;
-    grid-template-columns: 40px 1fr 1fr 1fr 100px;
+    grid-template-columns: 3fr 3fr 3fr 2fr;
     align-items: center;
     cursor: pointer;
 }
@@ -68,8 +68,27 @@
     color: var(--mf-text-muted);
 }
 
+.mf-col-label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.mf-col-label-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .mf-field-actions {
-    text-align: right;
+    margin-top: 4px;
+    margin-left: 28px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.mf-field-row-header:hover .mf-field-actions {
+    opacity: 1;
 }
 
 .mf-field-content {
