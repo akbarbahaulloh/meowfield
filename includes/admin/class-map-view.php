@@ -10,7 +10,7 @@ class Map_View {
         add_action('add_meta_boxes', [$this, 'add_meta_boxes']);
         add_action('save_post_meowfield_map', [$this, 'save_map_view']);
         add_filter('manage_meowfield_map_posts_columns', [$this, 'add_shortcode_column']);
-        add_action('manage_meowfield_map_posts_custom_column', [$this, 'render_shortcode_column', 10, 2]);
+        add_action('manage_meowfield_map_posts_custom_column', [$this, 'render_shortcode_column'], 10, 2);
     }
 
     public function add_meta_boxes() {

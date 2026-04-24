@@ -214,7 +214,7 @@ class Shortcodes {
                             'hide_empty' => true,
                         ]);
 
-                        if (!empty($terms)) {
+                        if (!empty($terms) && !is_wp_error($terms)) {
                             echo '<select class="mf-map-view-filter" data-taxonomy="' . esc_attr($tax_slug) . '">';
                             echo '<option value="">Semua ' . esc_html($tax_obj->label) . '</option>';
                             foreach ($terms as $term) {
