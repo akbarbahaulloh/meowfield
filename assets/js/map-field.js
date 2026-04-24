@@ -89,15 +89,21 @@
                 $searchBtn.text('Mencari...').prop('disabled', true);
                 
                 $.ajax({
-                    url: 'https://photon.komoot.io/api/',
+                    url: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates',
                     data: {
-                        q: query,
-                        limit: 1
+                        f: 'json',
+                        singleLine: query,
+                        maxLocations: 1
                     },
                     success: function(data) {
-                        if (data && data.features && data.features.length > 0) {
-                            const lon = data.features[0].geometry.coordinates[0];
-                            const lat = data.features[0].geometry.coordinates[1];
+                        // ArcGIS returns data as a string if dataType is not specified, but jQuery usually guesses json. Just in case:
+                        if (typeof data === 'string') {
+                            try { data = JSON.parse(data); } catch(e){}
+                        }
+                        
+                        if (data && data.candidates && data.candidates.length > 0) {
+                            const lon = data.candidates[0].location.x;
+                            const lat = data.candidates[0].location.y;
                             updateMapState(parseFloat(lat), parseFloat(lon), 15);
                         } else {
                             alert('Lokasi tidak ditemukan. Coba gunakan format: [Nama Desa], [Kecamatan/Kabupaten].');
