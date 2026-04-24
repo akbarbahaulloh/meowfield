@@ -32,7 +32,8 @@ spl_autoload_register(function ($class) {
     
     // Split into parts to handle subdirectories
     $parts = explode('\\', $relative_class);
-    $filename = 'class-' . strtolower(array_pop($parts)) . '.php';
+    $class_name = array_pop($parts);
+    $filename = 'class-' . strtolower(str_replace('_', '-', $class_name)) . '.php';
     $sub_path = '';
     if (!empty($parts)) {
         $sub_path = strtolower(implode('/', $parts)) . '/';
