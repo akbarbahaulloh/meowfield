@@ -107,10 +107,16 @@
         }
     };
 
-    $(document).ready(function() {
+    function tryInitMap() {
         if (typeof L !== 'undefined') {
             MeowMapView.init();
+        } else {
+            setTimeout(tryInitMap, 200);
         }
+    }
+
+    $(document).ready(function() {
+        tryInitMap();
     });
 
 })(jQuery);
