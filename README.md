@@ -59,7 +59,15 @@ You can display the saved data anywhere on your site using the following shortco
 ```markdown
 [meowfield_map_all name="your_map_field_name" post_type="any" height="500px"]
 ```
-*Note: Clickable popups will automatically be generated for each marker, linking to their respective posts. The map will automatically zoom and center to fit all markers on the screen.*
+
+**For an Advanced Map View (With Search and Taxonomy Filters):**
+1. Go to **MeowField > Map Views** and create a new Map View.
+2. Configure your filters, post types, and map field.
+3. Use the shortcode provided in the list:
+```markdown
+[meowfield_map_view id="789"]
+```
+*Note: Advanced Map Views support AJAX-based filtering, allowing users to search and filter by multiple taxonomies without page reloads.*
 
 ## 🔄 Updates
 MeowField checks for updates directly from the `main` branch of its GitHub repository. You will receive standard WordPress update notifications when a new commit is pushed. You can also manually check for updates via the "Check for Updates" link on the Plugins page.

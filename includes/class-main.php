@@ -20,6 +20,7 @@ class Main {
             new Admin\Fields();
             new Admin\Cpt();
             new Admin\Tax();
+            new Admin\MapView();
             
             // Initialize GitHub Updater
             $updater = new Admin\Updater('akbarbahaulloh', 'meowfield', 'main');
@@ -28,6 +29,7 @@ class Main {
         new Registrations();
         new Meta_Boxes();
         new Shortcodes();
+        new Ajax();
     }
 
     public function register_post_types() {
@@ -98,5 +100,21 @@ class Main {
         ];
         $args_tax['show_in_menu'] = 'edit.php?post_type=meowfield_group';
         register_post_type('meowfield_tax', $args_tax);
+
+        // Register meowfield_map (hidden, for Map View builder)
+        $args_map = $args;
+        $args_map['labels'] = [
+            'name'               => _x('Map Views', 'post type general name', 'meowfield'),
+            'singular_name'      => _x('Map View', 'post type singular name', 'meowfield'),
+            'menu_name'          => _x('Map Views', 'admin menu', 'meowfield'),
+            'add_new'            => _x('Add New', 'map view', 'meowfield'),
+            'add_new_item'       => __('Add New Map View', 'meowfield'),
+            'new_item'           => __('New Map View', 'meowfield'),
+            'edit_item'          => __('Edit Map View', 'meowfield'),
+            'view_item'          => __('View Map View', 'meowfield'),
+            'all_items'          => __('Map Views', 'meowfield'),
+        ];
+        $args_map['show_in_menu'] = 'edit.php?post_type=meowfield_group';
+        register_post_type('meowfield_map', $args_map);
     }
 }

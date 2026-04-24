@@ -10,6 +10,7 @@ class Shortcodes {
         add_shortcode('meowfield', [$this, 'render_field']);
         add_shortcode('meowfield_map', [$this, 'render_map']);
         add_shortcode('meowfield_map_all', [$this, 'render_map_all']);
+        add_shortcode('meowfield_map_view', [$this, 'render_map_view']);
     }
 
     public function render_field($atts) {
@@ -157,6 +158,77 @@ class Shortcodes {
                 }
             });
         </script>
+        <?php
+        return ob_get_clean();
+    }
+
+    public function render_map_view($atts) {
+        $atts = shortcode_atts([
+            'id' => 0,
+        ], $atts);
+
+        $map_id = intval($atts['id']);
+        if (!$map_id) return '<p>Map View ID is required.</p>';
+
+        $settings = get_post_meta($map_id, '_meowfield_map_settings', true);
+        if (!$settings) return '<p>Map View settings not found.</p>';
+
+        // Enqueue assets
+        wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
+        wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
+        wp_enqueue_script('meowfield-map-view', MEOWFIELD_URL . 'assets/js/map-view.js', ['jquery', 'leaflet'], time(), true);
+        
+        wp_localize_script('meowfield-map-view', 'meowfield_map_ajax', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce'    => wp_create_nonce('meowfield_map_nonce')
+        ]);
+
+        $id = 'mf-map-view-' . $map_id;
+
+        ob_start();
+        ?>
+        <div class="mf-map-view-container" id="container-<?php echo $id; ?>" data-map-id="<?php echo $map_id; ?>">
+            <style>
+                .mf-map-view-filters { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
+                .mf-map-view-filters select, .mf-map-view-filters input { 
+                    padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s;
+                }
+                .mf-map-view-filters select:focus, .mf-map-view-filters input:focus { border-color: #2563eb; }
+                .mf-map-view-search { flex: 1; min-width: 200px; }
+                .mf-map-view-canvas { width: 100%; border-radius: 10px; border: 1px solid #eee; overflow: hidden; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+            </style>
+            
+            <div class="mf-map-view-filters">
+                <?php if (!empty($settings['enable_search'])): ?>
+                    <input type="text" class="mf-map-view-search" placeholder="Cari data...">
+                <?php endif; ?>
+
+                <?php 
+                if (!empty($settings['taxonomies'])) {
+                    foreach ($settings['taxonomies'] as $tax_slug) {
+                        $tax_obj = get_taxonomy($tax_slug);
+                        if (!$tax_obj) continue;
+                        
+                        $terms = get_terms([
+                            'taxonomy' => $tax_slug,
+                            'hide_empty' => true,
+                        ]);
+
+                        if (!empty($terms)) {
+                            echo '<select class="mf-map-view-filter" data-taxonomy="' . esc_attr($tax_slug) . '">';
+                            echo '<option value="">Semua ' . esc_html($tax_obj->label) . '</option>';
+                            foreach ($terms as $term) {
+                                echo '<option value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</option>';
+                            }
+                            echo '</select>';
+                        }
+                    }
+                }
+                ?>
+            </div>
+
+            <div id="<?php echo $id; ?>" class="mf-map-view-canvas" style="height:<?php echo esc_attr($settings['height']); ?>;"></div>
+        </div>
         <?php
         return ob_get_clean();
     }
