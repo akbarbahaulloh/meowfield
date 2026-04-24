@@ -1,0 +1,169 @@
+/* MeowField Admin Styling */
+:root {
+    --mf-primary: #6366f1;
+    --mf-primary-hover: #4f46e5;
+    --mf-bg: #ffffff;
+    --mf-border: #e2e8f0;
+    --mf-text: #1e293b;
+    --mf-text-muted: #64748b;
+    --mf-row-bg: #f8fafc;
+    --mf-row-hover: #f1f5f9;
+}
+
+#meowfield-builder .inside {
+    margin: 0;
+    padding: 0;
+}
+
+.mf-builder-header {
+    background: #f1f5f9;
+    border-bottom: 1px solid var(--mf-border);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+.mf-fields-list {
+    margin: 0;
+}
+
+.mf-field-row {
+    background: var(--mf-bg);
+    border-bottom: 1px solid var(--mf-border);
+    transition: all 0.2s ease;
+}
+
+.mf-field-row:hover {
+    background: var(--mf-row-hover);
+}
+
+.mf-field-row-header {
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 40px 1fr 1fr 1fr 100px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.mf-field-handle {
+    color: var(--mf-text-muted);
+    cursor: move;
+}
+
+.mf-field-label-text {
+    font-weight: 600;
+    color: var(--mf-text);
+}
+
+.mf-field-name-text {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--mf-text-muted);
+}
+
+.mf-field-type-text {
+    font-size: 13px;
+    color: var(--mf-text-muted);
+}
+
+.mf-field-actions {
+    text-align: right;
+}
+
+.mf-field-content {
+    display: none;
+    padding: 20px;
+    background: #fcfdfe;
+    border-top: 1px solid var(--mf-border);
+}
+
+.mf-field-row.is-open .mf-field-content {
+    display: block;
+}
+
+.mf-field-settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.mf-setting-group {
+    margin-bottom: 15px;
+}
+
+.mf-setting-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--mf-text);
+}
+
+.mf-setting-group input[type="text"],
+.mf-setting-group select,
+.mf-setting-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--mf-border);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.mf-setting-group input[type="text"]:focus {
+    border-color: var(--mf-primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.mf-add-field-container {
+    padding: 16px;
+    background: #f8fafc;
+    text-align: right;
+}
+
+.mf-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    text-decoration: none;
+}
+
+.mf-btn-primary {
+    background: var(--mf-primary);
+    color: white;
+}
+
+.mf-btn-primary:hover {
+    background: var(--mf-primary-hover);
+}
+
+.mf-btn-danger {
+    background: #ef4444;
+    color: white;
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+.mf-btn-danger:hover {
+    background: #dc2626;
+}
+
+/* Location rules styling */
+.mf-location-rules {
+    padding: 16px;
+}
+
+.mf-rule-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.mf-rule-row select {
+    padding: 6px 12px;
+}
