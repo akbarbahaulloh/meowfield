@@ -18,11 +18,14 @@ class Main {
     private function load_components() {
         if (is_admin()) {
             new Admin\Fields();
+            new Admin\Cpt();
+            new Admin\Tax();
             
             // Initialize GitHub Updater
             $updater = new Admin\Updater('akbarbahaulloh', 'meowfield', 'main');
             $updater->init();
         }
+        new Registrations();
         new Meta_Boxes();
         new Shortcodes();
     }
@@ -63,5 +66,37 @@ class Main {
         ];
 
         register_post_type('meowfield_group', $args);
+
+        // Register meowfield_cpt (hidden, for Post Type builder)
+        $args_cpt = $args;
+        $args_cpt['labels'] = [
+            'name'               => _x('Post Types', 'post type general name', 'meowfield'),
+            'singular_name'      => _x('Post Type', 'post type singular name', 'meowfield'),
+            'menu_name'          => _x('Post Types', 'admin menu', 'meowfield'),
+            'add_new'            => _x('Add New', 'post type', 'meowfield'),
+            'add_new_item'       => __('Add New Post Type', 'meowfield'),
+            'new_item'           => __('New Post Type', 'meowfield'),
+            'edit_item'          => __('Edit Post Type', 'meowfield'),
+            'view_item'          => __('View Post Type', 'meowfield'),
+            'all_items'          => __('Post Types', 'meowfield'),
+        ];
+        $args_cpt['show_in_menu'] = 'edit.php?post_type=meowfield_group';
+        register_post_type('meowfield_cpt', $args_cpt);
+
+        // Register meowfield_tax (hidden, for Taxonomy builder)
+        $args_tax = $args;
+        $args_tax['labels'] = [
+            'name'               => _x('Taxonomies', 'post type general name', 'meowfield'),
+            'singular_name'      => _x('Taxonomy', 'post type singular name', 'meowfield'),
+            'menu_name'          => _x('Taxonomies', 'admin menu', 'meowfield'),
+            'add_new'            => _x('Add New', 'taxonomy', 'meowfield'),
+            'add_new_item'       => __('Add New Taxonomy', 'meowfield'),
+            'new_item'           => __('New Taxonomy', 'meowfield'),
+            'edit_item'          => __('Edit Taxonomy', 'meowfield'),
+            'view_item'          => __('View Taxonomy', 'meowfield'),
+            'all_items'          => __('Taxonomies', 'meowfield'),
+        ];
+        $args_tax['show_in_menu'] = 'edit.php?post_type=meowfield_group';
+        register_post_type('meowfield_tax', $args_tax);
     }
 }

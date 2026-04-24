@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MeowField
  * Plugin URI: https://github.com/akbarbahaulloh/meowfield
- * Description: Premium Custom Fields with OpenStreetMap support. A lightweight alternative to ACF.
+ * Description: Premium Content Modeling plugin. Build Custom Post Types, Taxonomies, and Custom Fields with OpenStreetMap support.
  * Version: 1.0.0
  * Author: Antigravity
  * Text Domain: meowfield
