@@ -23,11 +23,20 @@ class Ajax {
             wp_send_json_error('Map settings not found.');
         }
 
+        $defaults = [
+            'post_type' => 'any',
+            'map_field' => ''
+        ];
+        $settings = wp_parse_args($settings, $defaults);
+
+        if (empty($settings['map_field'])) {
+            wp_send_json_error('Map field not configured.');
+        }
+
         $args = [
-            'post_type'      => $settings['post_type'] === 'any' ? 'any' : $settings['post_type'],
+            'post_type'      => $settings['post_type'] === 'any' ? 'any' : explode(',', $settings['post_type']),
             'post_status'    => 'publish',
             'posts_per_page' => -1,
-            's'              => $search,
             'meta_query'     => [
                 [
                     'key'     => $settings['map_field'],
@@ -35,6 +44,10 @@ class Ajax {
                 ]
             ]
         ];
+
+        if (!empty($search)) {
+            $args['s'] = $search;
+        }
 
         $tax_query = [];
         if (!empty($tax_filters)) {
