@@ -67,7 +67,7 @@ foreach ($groups as $g) {
             <?php foreach ($taxonomies as $slug => $obj): ?>
                 <label class="mf-mv-checkbox-item">
                     <input type="checkbox" name="map_view[taxonomies][]" value="<?php echo esc_attr($slug); ?>" <?php checked(in_array($slug, $settings['taxonomies'])); ?>>
-                    <?php echo esc_html($obj->label); ?>
+                    <?php echo esc_html($obj->label); ?> <small style="color:#999; font-size: 10px;">(<?php echo esc_html($slug); ?>)</small>
                 </label>
             <?php endforeach; ?>
         </div>

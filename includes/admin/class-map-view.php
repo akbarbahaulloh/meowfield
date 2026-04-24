@@ -53,10 +53,16 @@ class Map_View {
 
         $settings = isset($_POST['map_view']) ? $_POST['map_view'] : [];
         
+        $map_field = sanitize_text_field($settings['map_field']);
+        // If user accidentally pasted the whole shortcode [meowfield_map name="lokasi"]
+        if (preg_match('/name="([^"]+)"/', $map_field, $matches)) {
+            $map_field = $matches[1];
+        }
+
         // Sanitize
         $sanitized = [
             'post_type' => sanitize_text_field($settings['post_type']),
-            'map_field' => sanitize_text_field($settings['map_field']),
+            'map_field' => $map_field,
             'taxonomies' => isset($settings['taxonomies']) ? array_map('sanitize_text_field', $settings['taxonomies']) : [],
             'enable_search' => isset($settings['enable_search']) ? 1 : 0,
             'height' => sanitize_text_field($settings['height'])
