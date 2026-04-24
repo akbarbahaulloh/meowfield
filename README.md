@@ -50,10 +50,16 @@ You can display the saved data anywhere on your site using the following shortco
 [meowfield name="your_field_name"]
 ```
 
-**For the Map Field (Displays an interactive map):**
+**For the Map Field (Displays a single interactive map):**
 ```markdown
 [meowfield_map name="your_map_field_name" height="400px"]
 ```
+
+**For a Multi-Marker Map (Displays ALL locations from multiple posts on one map):**
+```markdown
+[meowfield_map_all name="your_map_field_name" post_type="any" height="500px"]
+```
+*Note: Clickable popups will automatically be generated for each marker, linking to their respective posts. The map will automatically zoom and center to fit all markers on the screen.*
 
 ## 🔄 Updates
 MeowField checks for updates directly from the `main` branch of its GitHub repository. You will receive standard WordPress update notifications when a new commit is pushed. You can also manually check for updates via the "Check for Updates" link on the Plugins page.
