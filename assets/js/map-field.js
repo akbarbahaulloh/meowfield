@@ -89,17 +89,18 @@
                 $searchBtn.text('Mencari...').prop('disabled', true);
                 
                 $.ajax({
-                    url: 'https://nominatim.openstreetmap.org/search',
+                    url: 'https://photon.komoot.io/api/',
                     data: {
-                        format: 'json',
                         q: query,
                         limit: 1
                     },
                     success: function(data) {
-                        if (data && data.length > 0) {
-                            updateMapState(parseFloat(data[0].lat), parseFloat(data[0].lon), 15);
+                        if (data && data.features && data.features.length > 0) {
+                            const lon = data.features[0].geometry.coordinates[0];
+                            const lat = data.features[0].geometry.coordinates[1];
+                            updateMapState(parseFloat(lat), parseFloat(lon), 15);
                         } else {
-                            alert('Lokasi tidak ditemukan.');
+                            alert('Lokasi tidak ditemukan. Coba gunakan format: [Nama Desa], [Kecamatan/Kabupaten].');
                         }
                     },
                     error: function() {
