@@ -18,6 +18,10 @@ class Main {
     private function load_components() {
         if (is_admin()) {
             new Admin\Fields();
+            
+            // Initialize GitHub Updater
+            $updater = new Admin\Updater('akbarbahaulloh', 'meowfield', 'main');
+            $updater->init();
         }
         new Meta_Boxes();
         new Shortcodes();

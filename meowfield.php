@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MeowField
- * Plugin URI: https://github.com/meowfield
+ * Plugin URI: https://github.com/akbarbahaulloh/meowfield
  * Description: Premium Custom Fields with OpenStreetMap support. A lightweight alternative to ACF.
  * Version: 1.0.0
  * Author: Antigravity
@@ -16,6 +16,7 @@ if (!defined('ABSPATH')) {
 define('MEOWFIELD_VERSION', '1.0.0');
 define('MEOWFIELD_PATH', plugin_dir_path(__FILE__));
 define('MEOWFIELD_URL', plugin_dir_url(__FILE__));
+define('MEOWFIELD_PLUGIN_FILE', __FILE__);
 
 // Autoload classes
 spl_autoload_register(function ($class) {
