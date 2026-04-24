@@ -74,19 +74,22 @@ class Meta_Boxes {
         $label = esc_html($field['label']);
         $name = esc_attr($field['name']);
         $type = $field['type'];
+        $is_required = isset($field['required']) && $field['required'] ? true : false;
+        $req_attr = $is_required ? 'required' : '';
+        $req_mark = $is_required ? ' <span style="color:red;">*</span>' : '';
 
         echo '<div class="meowfield-field-row" style="margin-bottom: 15px;">';
-        echo '<label style="display:block; font-weight:bold; margin-bottom:5px;">' . $label . '</label>';
+        echo '<label style="display:block; font-weight:bold; margin-bottom:5px;">' . $label . $req_mark . '</label>';
 
         switch ($type) {
             case 'text':
-                echo '<input type="text" name="mf[' . $name . ']" value="' . esc_attr($value) . '" style="width:100%;">';
+                echo '<input type="text" name="mf[' . $name . ']" value="' . esc_attr($value) . '" style="width:100%;" ' . $req_attr . '>';
                 break;
             case 'textarea':
-                echo '<textarea name="mf[' . $name . ']" style="width:100%;" rows="4">' . esc_textarea($value) . '</textarea>';
+                echo '<textarea name="mf[' . $name . ']" style="width:100%;" rows="4" ' . $req_attr . '>' . esc_textarea($value) . '</textarea>';
                 break;
             case 'select':
-                echo '<select name="mf[' . $name . ']" style="width:100%;">';
+                echo '<select name="mf[' . $name . ']" style="width:100%;" ' . $req_attr . '>';
                 // Options logic can be added later
                 echo '</select>';
                 break;

@@ -16,8 +16,8 @@ class Fields {
         global $post;
         if ($hook == 'post-new.php' || $hook == 'post.php') {
             if ($post && $post->post_type === 'meowfield_group') {
-                wp_enqueue_style('meowfield-admin', MEOWFIELD_URL . 'assets/css/admin.css', [], MEOWFIELD_VERSION);
-                wp_enqueue_script('meowfield-admin', MEOWFIELD_URL . 'assets/js/admin.js', ['jquery', 'jquery-ui-sortable'], MEOWFIELD_VERSION, true);
+                wp_enqueue_style('meowfield-admin', MEOWFIELD_URL . 'assets/css/admin.css', [], time());
+                wp_enqueue_script('meowfield-admin', MEOWFIELD_URL . 'assets/js/admin.js', ['jquery', 'jquery-ui-sortable'], time(), true);
                 
                 wp_localize_script('meowfield-admin', 'meowfield', [
                     'nonce' => wp_create_nonce('meowfield_nonce'),
@@ -87,6 +87,7 @@ class Fields {
                     'name'  => sanitize_title($field['name'] ?: $field['label']),
                     'type'  => sanitize_text_field($field['type']),
                     'key'   => sanitize_text_field($field['key']),
+                    'required' => isset($field['required']) ? 1 : 0,
                     'options' => isset($field['options']) ? $field['options'] : [],
                 ];
             }

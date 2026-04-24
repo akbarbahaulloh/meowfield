@@ -52,6 +52,13 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
                             </select>
                         </div>
                         <div class="mf-setting-group">
+                            <label>Required?</label>
+                            <select name="meowfield_fields[<?php echo $index; ?>][required]">
+                                <option value="0" <?php selected(isset($field['required']) ? $field['required'] : 0, 0); ?>>No</option>
+                                <option value="1" <?php selected(isset($field['required']) ? $field['required'] : 0, 1); ?>>Yes</option>
+                            </select>
+                        </div>
+                        <div class="mf-setting-group">
                             <label>Field Key</label>
                             <input type="text" name="meowfield_fields[<?php echo $index; ?>][key]" value="<?php echo esc_attr($key); ?>" readonly style="background: #f1f1f1;">
                         </div>
@@ -101,6 +108,13 @@ wp_nonce_field('meowfield_save_fields', 'meowfield_fields_nonce');
                         <option value="select">Select</option>
                         <option value="image">Image</option>
                         <option value="map">Map (OpenStreetMap)</option>
+                    </select>
+                </div>
+                <div class="mf-setting-group">
+                    <label>Required?</label>
+                    <select name="meowfield_fields[[INDEX]][required]">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
                     </select>
                 </div>
                 <div class="mf-setting-group">
