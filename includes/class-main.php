@@ -29,7 +29,6 @@ class Main {
         new Registrations();
         new Meta_Boxes();
         new Shortcodes();
-        new Ajax();
     }
 
     public function register_post_types() {

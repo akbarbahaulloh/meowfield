@@ -173,29 +173,88 @@ class Shortcodes {
         $settings = get_post_meta($map_id, '_meowfield_map_settings', true);
         if (!$settings) return '<p>Map View settings not found.</p>';
 
+        $settings = wp_parse_args($settings, [
+            'post_type' => 'any',
+            'map_field' => '',
+            'taxonomies' => [],
+            'enable_search' => 1,
+            'height' => '500px'
+        ]);
+
+        if (empty($settings['map_field'])) return '<p>Map View map field not configured.</p>';
+
+        // Fetch all locations
+        $args = [
+            'post_type'      => $settings['post_type'] === 'any' ? 'any' : explode(',', $settings['post_type']),
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'meta_query'     => [
+                [
+                    'key'     => $settings['map_field'],
+                    'compare' => 'EXISTS'
+                ]
+            ]
+        ];
+
+        $query = new \WP_Query($args);
+        $markers = [];
+
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $post_id = get_the_ID();
+                $val = get_post_meta($post_id, $settings['map_field'], true);
+                if ($val) {
+                    $data = json_decode(stripslashes($val), true);
+                    if ($data && isset($data['lat']) && isset($data['lng'])) {
+                        
+                        // Collect taxonomy slugs for this post
+                        $post_tax_data = [];
+                        if (!empty($settings['taxonomies'])) {
+                            foreach ($settings['taxonomies'] as $tax) {
+                                $terms = wp_get_post_terms($post_id, $tax, ['fields' => 'slugs']);
+                                if (!is_wp_error($terms)) {
+                                    $post_tax_data[$tax] = $terms;
+                                } else {
+                                    $post_tax_data[$tax] = [];
+                                }
+                            }
+                        }
+
+                        $markers[] = [
+                            'lat' => $data['lat'],
+                            'lng' => $data['lng'],
+                            'title' => get_the_title(),
+                            'url' => get_permalink(),
+                            'taxonomies' => $post_tax_data
+                        ];
+                    }
+                }
+            }
+            wp_reset_postdata();
+        }
+
         // Enqueue assets
         wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
         wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
-        wp_enqueue_script('meowfield-map-view', MEOWFIELD_URL . 'assets/js/map-view.js', ['jquery', 'leaflet'], time(), true);
-        
-        wp_localize_script('meowfield-map-view', 'meowfield_map_ajax', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce'    => wp_create_nonce('meowfield_map_nonce')
-        ]);
 
         $id = 'mf-map-view-' . $map_id;
 
         ob_start();
         ?>
-        <div class="mf-map-view-container" id="container-<?php echo $id; ?>" data-map-id="<?php echo $map_id; ?>">
+        <div class="mf-map-view-container" id="container-<?php echo $id; ?>">
             <style>
                 .mf-map-view-filters { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
                 .mf-map-view-filters select, .mf-map-view-filters input { 
-                    padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s;
+                    padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s; max-width: 100%;
                 }
                 .mf-map-view-filters select:focus, .mf-map-view-filters input:focus { border-color: #2563eb; }
                 .mf-map-view-search { flex: 1; min-width: 200px; }
-                .mf-map-view-canvas { width: 100%; border-radius: 10px; border: 1px solid #eee; overflow: hidden; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+                .mf-map-view-canvas { width: 100%; border-radius: 10px; border: 1px solid #eee; overflow: hidden; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); z-index: 1;}
+                .mf-map-view-canvas .leaflet-popup-content-wrapper { border-radius: 8px; }
+                .mf-map-view-canvas .leaflet-popup-content { margin: 15px 20px; font-family: inherit; }
+                .mf-map-view-canvas .leaflet-popup-content a { color: #2563eb; text-decoration: none; font-weight: bold; font-size: 14px; }
+                .mf-map-view-canvas .leaflet-popup-content a:hover { text-decoration: underline; }
             </style>
             
             <div class="mf-map-view-filters">
@@ -229,6 +288,90 @@ class Shortcodes {
 
             <div id="<?php echo $id; ?>" class="mf-map-view-canvas" style="height:<?php echo esc_attr($settings['height']); ?>;"></div>
         </div>
+
+        <script>
+            function initMeowMap_<?php echo $map_id; ?>() {
+                if (typeof L === 'undefined') {
+                    setTimeout(initMeowMap_<?php echo $map_id; ?>, 200);
+                    return;
+                }
+
+                const container = document.getElementById('container-<?php echo $id; ?>');
+                if (!container) return;
+
+                const allData = <?php echo json_encode($markers); ?>;
+                let activeMarkers = L.featureGroup();
+                const map = L.map('<?php echo $id; ?>');
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+                activeMarkers.addTo(map);
+
+                function renderMap(data) {
+                    activeMarkers.clearLayers();
+                    const bounds = [];
+
+                    data.forEach(function(m) {
+                        const marker = L.marker([m.lat, m.lng]);
+                        marker.bindPopup('<div><a href="' + m.url + '">' + m.title + '</a></div>');
+                        activeMarkers.addLayer(marker);
+                        bounds.push([m.lat, m.lng]);
+                    });
+
+                    if (bounds.length > 0) {
+                        map.fitBounds(bounds, { padding: [40, 40] });
+                    } else {
+                        map.setView([-0.789275, 113.921327], 5);
+                    }
+                }
+
+                function filterData() {
+                    const searchInput = container.querySelector('.mf-map-view-search');
+                    const searchQuery = searchInput ? searchInput.value.toLowerCase() : '';
+                    
+                    const selects = container.querySelectorAll('.mf-map-view-filter');
+                    const selectedTax = {};
+                    selects.forEach(function(select) {
+                        if (select.value) {
+                            selectedTax[select.getAttribute('data-taxonomy')] = select.value;
+                        }
+                    });
+
+                    const filtered = allData.filter(function(m) {
+                        if (searchQuery && m.title.toLowerCase().indexOf(searchQuery) === -1) {
+                            return false;
+                        }
+
+                        for (const tax in selectedTax) {
+                            const selectedTerm = selectedTax[tax];
+                            if (!m.taxonomies[tax] || m.taxonomies[tax].indexOf(selectedTerm) === -1) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    });
+
+                    renderMap(filtered);
+                }
+
+                // Initialize
+                renderMap(allData);
+
+                // Event Listeners
+                const inputs = container.querySelectorAll('.mf-map-view-search, .mf-map-view-filter');
+                inputs.forEach(function(input) {
+                    input.addEventListener('input', filterData);
+                    input.addEventListener('change', filterData);
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMeowMap_<?php echo $map_id; ?>);
+            } else {
+                initMeowMap_<?php echo $map_id; ?>();
+            }
+        </script>
         <?php
         return ob_get_clean();
     }
